@@ -1,33 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class CanvasManager : MonoBehaviour
 {
     GameManager gameManager;
-    public GameObject startButton;
-    public GameObject gameOverButton;
+    public GameObject startButtonGameObject;
+    public GameObject gameOverButtonGameObject;
+    public GameObject scoreTextGameObject;
+    private TMP_Text scoreText;
 
     void Start()
     {
         gameManager = GameManager.instance;
 
-        if (gameOverButton != null)
+        if (gameOverButtonGameObject != null)
         {
-            gameOverButton.SetActive(false);
+            gameOverButtonGameObject.SetActive(false);
             gameManager.SubscribeToGameStateChange(OnGameOver);
         }
+
+        if (scoreTextGameObject != null)
+        {
+            scoreText = scoreTextGameObject.GetComponent<TMP_Text>();
+            gameManager.SubscribeToScoreChange(OnScoreChange);
+        }
+    }
+
+    void OnScoreChange(int score)
+    {
+        if (scoreTextGameObject != null) scoreText.text = score.ToString();
     }
 
     void OnGameOver(GameState gameState)
     {
-        if (gameState == GameState.GameOver) gameOverButton.SetActive(true);
+        if (gameState == GameState.GameOver) gameOverButtonGameObject.SetActive(true);
     }
 
     public void StartGame()
     {
         gameManager.gameState = GameState.Playing;
-        if (startButton != null) startButton.SetActive(false);
-        if (gameOverButton != null) gameOverButton.SetActive(false);
+        if (startButtonGameObject != null) startButtonGameObject.SetActive(false);
+        if (gameOverButtonGameObject != null) gameOverButtonGameObject.SetActive(false);
     }
 }

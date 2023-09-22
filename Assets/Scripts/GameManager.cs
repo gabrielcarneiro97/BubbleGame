@@ -23,12 +23,10 @@ public class GameManager : Singleton<GameManager>
                 playerLife = 3;
                 _gameState = GameState.Restarting;
                 onGameStateChange.Invoke(_gameState);
-                Debug.Log(_gameState);
                 return;
             }
 
             _gameState = value;
-            Debug.Log(_gameState);
             if (_gameState == GameState.Playing) Time.timeScale = 1;
             if (_gameState == GameState.Paused || _gameState == GameState.GameOver) Time.timeScale = 0;
             onGameStateChange.Invoke(_gameState);
@@ -74,7 +72,6 @@ public class GameManager : Singleton<GameManager>
         set
         {
             _playerLife = value;
-            Debug.Log("PlayerLife: " + _playerLife);
             if (_playerLife <= 0) gameState = GameState.GameOver;
             onPlayerLifeChange.Invoke(_playerLife);
         }

@@ -927,7 +927,7 @@ GameObject:
   - component: {fileID: 523341535}
   - component: {fileID: 523341534}
   m_Layer: 0
-  m_Name: BubbleDespawner (1)
+  m_Name: BubbleDespawnerFlor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
