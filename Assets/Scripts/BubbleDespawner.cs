@@ -5,6 +5,7 @@ using UnityEngine;
 public class BubbleDespawner : MonoBehaviour
 {
     GameManager gameManager;
+    public int lifeLoss = 1;
 
     void Start()
     {
@@ -15,8 +16,9 @@ public class BubbleDespawner : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Bubble"))
         {
-            Destroy(other.gameObject);
-            gameManager.playerLife--;
+            var bubble = other.gameObject.GetComponent<Bubble>();
+            bubble.Despawn();
+            gameManager.playerLife -= lifeLoss;
         }
     }
 }

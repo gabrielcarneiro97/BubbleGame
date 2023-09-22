@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -22,8 +16,8 @@ public class InputManager : MonoBehaviour
                     Ray ray = Camera.main.ScreenPointToRay(touch.position);
                     if (Physics.Raycast(ray, out RaycastHit hit))
                     {
-                        Destroy(hit.collider.gameObject);
-                        Debug.Log("Touch");
+                        var bubble = hit.collider.gameObject.GetComponent<Bubble>();
+                        bubble.OnHit();
                     }
                 }
             }

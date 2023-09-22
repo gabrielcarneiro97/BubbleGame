@@ -13,24 +13,43 @@ public class BubbleSpawner : MonoBehaviour
 
     private GameManager gameManager;
 
+    private List<GameObject> bubbles = new List<GameObject>();
+
     void Start()
     {
         gameManager = GameManager.instance;
         rightLimitX = rightLimit.transform.position.x;
         leftLimitX = leftLimit.transform.position.x;
-        gameManager.SubscribeToGameStateChange(StartSpawning);
+        gameManager.SubscribeToGameStateChange(OnGameStateChange);
+        gameManager.SubscribeToBubbleDestroyed(OnBubbleDestroyed);
     }
 
-    public void StartSpawning(GameState gameState)
+    void OnGameStateChange(GameState gameState)
     {
+        if (gameState == GameState.Restarting)
+        {
+            bubbles.ForEach(bubble =>
+            {
+                if (bubble != null) Destroy(bubble);
+            });
+            StopAllCoroutines();
+            gameManager.gameState = GameState.Playing;
+        }
         if (gameState == GameState.Playing) StartCoroutine(SpawnBubbles());
+    }
+
+    public void OnBubbleDestroyed(GameObject bubble, int score)
+    {
+        bubbles.Remove(bubble);
+        gameManager.score += score;
     }
 
     IEnumerator SpawnBubbles()
     {
         float randomX = Random.Range(leftLimitX, rightLimitX);
         var spawnPosition = new Vector3(randomX, transform.position.y, transform.position.z);
-        Instantiate(bubblePrefab, spawnPosition, Quaternion.identity);
+        var bubble = Instantiate(bubblePrefab, spawnPosition, Quaternion.identity);
+        bubbles.Add(bubble);
         yield return new WaitForSeconds(Random.Range(.3f, .5f));
 
         if (gameManager.gameState == GameState.Playing) StartCoroutine(SpawnBubbles());

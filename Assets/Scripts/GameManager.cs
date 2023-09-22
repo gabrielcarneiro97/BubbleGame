@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public enum GameState
 {
     Paused,
+    Restarting,
     Playing,
     GameOver
 }
@@ -16,7 +17,20 @@ public class GameManager : Singleton<GameManager>
         get { return _gameState; }
         set
         {
+            if (_gameState == GameState.GameOver && value == GameState.Playing)
+            {
+                score = 0;
+                playerLife = 3;
+                _gameState = GameState.Restarting;
+                onGameStateChange.Invoke(_gameState);
+                Debug.Log(_gameState);
+                return;
+            }
+
             _gameState = value;
+            Debug.Log(_gameState);
+            if (_gameState == GameState.Playing) Time.timeScale = 1;
+            if (_gameState == GameState.Paused || _gameState == GameState.GameOver) Time.timeScale = 0;
             onGameStateChange.Invoke(_gameState);
         }
     }
@@ -60,7 +74,8 @@ public class GameManager : Singleton<GameManager>
         set
         {
             _playerLife = value;
-            if (_playerLife >= 0) gameState = GameState.GameOver;
+            Debug.Log("PlayerLife: " + _playerLife);
+            if (_playerLife <= 0) gameState = GameState.GameOver;
             onPlayerLifeChange.Invoke(_playerLife);
         }
     }
@@ -73,6 +88,23 @@ public class GameManager : Singleton<GameManager>
     public void UnsubscribeToPlayerLifeChange(UnityAction<int> action)
     {
         onPlayerLifeChange.RemoveListener(action);
+    }
+
+    private UnityEvent<GameObject, int> onBubbleDestroyed = new UnityEvent<GameObject, int>();
+
+    public void SubscribeToBubbleDestroyed(UnityAction<GameObject, int> action)
+    {
+        onBubbleDestroyed.AddListener(action);
+    }
+
+    public void UnsubscribeToBubbleDestroyed(UnityAction<GameObject, int> action)
+    {
+        onBubbleDestroyed.RemoveListener(action);
+    }
+
+    public void BubbleDestroyed(GameObject bubble, int score)
+    {
+        onBubbleDestroyed.Invoke(bubble, score);
     }
 
 }
