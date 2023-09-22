@@ -10,6 +10,9 @@ public class CanvasManager : MonoBehaviour
     public GameObject scoreTextGameObject;
     private TMP_Text scoreText;
 
+    public GameObject lifesGameObject;
+    public List<GameObject> lifes = new List<GameObject>();
+
     void Start()
     {
         gameManager = GameManager.instance;
@@ -24,6 +27,20 @@ public class CanvasManager : MonoBehaviour
         {
             scoreText = scoreTextGameObject.GetComponent<TMP_Text>();
             gameManager.SubscribeToScoreChange(OnScoreChange);
+        }
+
+        if (lifesGameObject != null)
+        {
+            gameManager.SubscribeToPlayerLifeChange(OnPlayerLifeChange);
+        }
+    }
+
+    void OnPlayerLifeChange(int life)
+    {
+        lifes.ForEach(lifeGameObject => lifeGameObject.SetActive(false));
+        for (int i = 0; i < life; i++)
+        {
+            lifes[i].SetActive(true);
         }
     }
 
