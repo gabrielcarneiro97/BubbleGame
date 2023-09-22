@@ -1,8 +1,36 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum GameState
+{
+    Paused,
+    Playing,
+    GameOver
+}
+
 public class GameManager : Singleton<GameManager>
 {
+    private GameState _gameState = GameState.Paused;
+    public GameState gameState
+    {
+        get { return _gameState; }
+        set
+        {
+            _gameState = value;
+            onGameStateChange.Invoke(_gameState);
+        }
+    }
+    private UnityEvent<GameState> onGameStateChange = new UnityEvent<GameState>();
+
+    public void SubscribeToGameStateChange(UnityAction<GameState> action)
+    {
+        onGameStateChange.AddListener(action);
+    }
+
+    public void UnsubscribeToGameStateChange(UnityAction<GameState> action)
+    {
+        onGameStateChange.RemoveListener(action);
+    }
 
     private int _score = 0;
     public int score
@@ -32,6 +60,7 @@ public class GameManager : Singleton<GameManager>
         set
         {
             _playerLife = value;
+            if (_playerLife >= 0) gameState = GameState.GameOver;
             onPlayerLifeChange.Invoke(_playerLife);
         }
     }

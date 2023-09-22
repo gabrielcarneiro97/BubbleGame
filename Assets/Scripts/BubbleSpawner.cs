@@ -18,7 +18,12 @@ public class BubbleSpawner : MonoBehaviour
         gameManager = GameManager.instance;
         rightLimitX = rightLimit.transform.position.x;
         leftLimitX = leftLimit.transform.position.x;
-        StartCoroutine(SpawnBubbles());
+        gameManager.SubscribeToGameStateChange(StartSpawning);
+    }
+
+    public void StartSpawning(GameState gameState)
+    {
+        if (gameState == GameState.Playing) StartCoroutine(SpawnBubbles());
     }
 
     IEnumerator SpawnBubbles()
@@ -26,10 +31,8 @@ public class BubbleSpawner : MonoBehaviour
         float randomX = Random.Range(leftLimitX, rightLimitX);
         var spawnPosition = new Vector3(randomX, transform.position.y, transform.position.z);
         Instantiate(bubblePrefab, spawnPosition, Quaternion.identity);
-        yield return new WaitForSeconds(.3f);
-        if (gameManager.playerLife > 0)
-        {
-            StartCoroutine(SpawnBubbles());
-        }
+        yield return new WaitForSeconds(Random.Range(.3f, .5f));
+
+        if (gameManager.gameState == GameState.Playing) StartCoroutine(SpawnBubbles());
     }
 }
