@@ -17,12 +17,12 @@ public class Bubble : MonoBehaviour
     public void Despawn()
     {
         gameManager.BubbleDestroyed(gameObject, 0);
-        Destroy(gameObject);
+        gameManager.AddBubbleToPool(gameObject);
     }
 
     public void OnHit()
     {
         gameManager.BubbleDestroyed(gameObject, 1);
-        Destroy(gameObject);
+        gameManager.AddBubbleToPool(gameObject);
     }
 }

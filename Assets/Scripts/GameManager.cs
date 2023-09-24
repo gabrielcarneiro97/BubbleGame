@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -85,6 +87,28 @@ public class GameManager : Singleton<GameManager>
     public void UnsubscribeToPlayerLifeChange(UnityAction<int> action)
     {
         onPlayerLifeChange.RemoveListener(action);
+    }
+
+    private Stack<GameObject> _bubblesPool = new Stack<GameObject>();
+    private Vector3 _bubblesPoolPosition = new Vector3(-15, -15, -15);
+
+    public void AddBubbleToPool(GameObject bubble)
+    {
+        bubble.SetActive(false);
+        bubble.transform.position = _bubblesPoolPosition;
+        _bubblesPool.Push(bubble);
+    }
+
+    public GameObject PopBubbleFromPool()
+    {
+        var hasBubble = _bubblesPool.TryPop(out var bubble);
+        if (hasBubble)
+        {
+            bubble.SetActive(true);
+            return bubble;
+        }
+
+        return null;
     }
 
     private UnityEvent<GameObject, int> onBubbleDestroyed = new UnityEvent<GameObject, int>();

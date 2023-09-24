@@ -30,8 +30,9 @@ public class BubbleSpawner : MonoBehaviour
         {
             bubbles.ForEach(bubble =>
             {
-                if (bubble != null) Destroy(bubble);
+                if (bubble != null) gameManager.AddBubbleToPool(bubble);
             });
+            bubbles.Clear();
             StopAllCoroutines();
             gameManager.gameState = GameState.Playing;
         }
@@ -48,7 +49,9 @@ public class BubbleSpawner : MonoBehaviour
     {
         float randomX = Random.Range(leftLimitX, rightLimitX);
         var spawnPosition = new Vector3(randomX, transform.position.y, transform.position.z);
-        var bubble = Instantiate(bubblePrefab, spawnPosition, Quaternion.identity);
+        var bubble = gameManager.PopBubbleFromPool();
+        if (bubble == null) bubble = Instantiate(bubblePrefab, spawnPosition, Quaternion.identity);
+        else bubble.transform.position = spawnPosition;
         bubbles.Add(bubble);
         yield return new WaitForSeconds(Random.Range(.3f, .5f));
 
