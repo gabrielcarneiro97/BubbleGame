@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    GameManager gameManager;
+
+    void Start()
+    {
+        gameManager = GameManager.instance;
+    }
     // Update is called once per frame
     void Update()
     {
-        if (Input.touchCount > 0)
+        if (gameManager.gameState == GameState.Playing && Input.touchCount > 0)
         {
             foreach (Touch touch in Input.touches)
             {

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -8,18 +9,25 @@ public enum GameState
     Paused,
     Restarting,
     Playing,
-    GameOver
+    GameOver,
+    Win
 }
 
 public class GameManager : Singleton<GameManager>
 {
+    IEnumerator WinTimer()
+    {
+        yield return new WaitForSeconds(20);
+        gameState = GameState.Win;
+    }
+
     private GameState _gameState = GameState.Paused;
     public GameState gameState
     {
         get { return _gameState; }
         set
         {
-            if (_gameState == GameState.GameOver && value == GameState.Playing)
+            if ((_gameState == GameState.GameOver || _gameState == GameState.Win) && value == GameState.Playing)
             {
                 score = 0;
                 playerLife = 3;
@@ -29,8 +37,12 @@ public class GameManager : Singleton<GameManager>
             }
 
             _gameState = value;
-            if (_gameState == GameState.Playing) Time.timeScale = 1;
-            if (_gameState == GameState.Paused || _gameState == GameState.GameOver) Time.timeScale = 0;
+            if (_gameState == GameState.Playing)
+            {
+                StartCoroutine(WinTimer());
+                Time.timeScale = 1;
+            }
+            if (_gameState == GameState.Paused || _gameState == GameState.GameOver || _gameState == GameState.Win) Time.timeScale = 0;
             onGameStateChange.Invoke(_gameState);
         }
     }

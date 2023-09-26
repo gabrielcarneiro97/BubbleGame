@@ -7,6 +7,7 @@ public class CanvasManager : MonoBehaviour
     GameManager gameManager;
     public GameObject startButtonGameObject;
     public GameObject gameOverButtonGameObject;
+    public GameObject winTextGameObject;
     public GameObject scoreTextGameObject;
     private TMP_Text scoreText;
 
@@ -33,6 +34,7 @@ public class CanvasManager : MonoBehaviour
         {
             gameManager.SubscribeToPlayerLifeChange(OnPlayerLifeChange);
         }
+
     }
 
     void OnPlayerLifeChange(int life)
@@ -52,6 +54,11 @@ public class CanvasManager : MonoBehaviour
     void OnGameOver(GameState gameState)
     {
         if (gameState == GameState.GameOver) gameOverButtonGameObject.SetActive(true);
+        if (gameState == GameState.Win)
+        {
+            winTextGameObject.SetActive(true);
+            gameOverButtonGameObject.SetActive(true);
+        }
     }
 
     public void StartGame()
@@ -59,5 +66,6 @@ public class CanvasManager : MonoBehaviour
         gameManager.gameState = GameState.Playing;
         if (startButtonGameObject != null) startButtonGameObject.SetActive(false);
         if (gameOverButtonGameObject != null) gameOverButtonGameObject.SetActive(false);
+        if (winTextGameObject != null) winTextGameObject.SetActive(false);
     }
 }
